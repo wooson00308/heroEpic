@@ -14,18 +14,25 @@ public class InputController : Controller
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            character.Attack(mousePosition);
+            character.Attack2MousePos(mousePosition);
         }
     }
 
     private void Move(Character character)
     {
-        float moveX = Input.GetAxis("Horizontal");
-        float moveY = Input.GetAxis("Vertical");
+        Vector2 moveVector = Vector2.zero;
 
-        var moveVector = new Vector2(moveX, moveY);
+        if (Input.GetKey(KeyCode.W)) // 위로 이동
+            moveVector.y += 1;
+        if (Input.GetKey(KeyCode.S)) // 아래로 이동
+            moveVector.y -= 1;
+        if (Input.GetKey(KeyCode.A)) // 왼쪽으로 이동
+            moveVector.x -= 1;
+        if (Input.GetKey(KeyCode.D)) // 오른쪽으로 이동
+            moveVector.x += 1;
+
         moveVector.Normalize();
-
         character.Move(moveVector);
     }
+
 }

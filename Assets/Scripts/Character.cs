@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class Character : MonoBehaviour
 {
@@ -13,15 +14,30 @@ public class Character : MonoBehaviour
     [Header("Action")]
     public Movement movement;
     public Attack attack;
+    public Inventory inventory;
 
+    [Header("Collider")]
+    public CollideHandler HitCollider;
+    public CollideHandler AttackCollider;
 
     private void Start()
     {
         UpdateStats();
     }
 
+    private void OnEnable()
+    {
+        AttackCollider.CollideEnterEvent += HitTarget;
+    }
+
+    private void OnDisable()
+    {
+        AttackCollider.CollideEnterEvent -= HitTarget;
+    }
+
     private void Update()
     {
+        if (controller == null) return;
         controller.OnUpdate(this);
     }
 
@@ -31,17 +47,34 @@ public class Character : MonoBehaviour
         animator.SetFloat("MoveSpeed", stats.MoveSpeed / moveSpeedAnimOffset);
     }
 
-    public void Attack(Vector2 mousePosition)
+    public void Attack(Vector2 attackPos)
     {
+        if (animator.GetBool("IsHit")) return;
+        if (animator.GetFloat("AttackDelaying") > 0) return;
         animator.SetTrigger("Attack");
-        attack.Action(mousePosition);
+
+        animator.SetFloat("AttackDelaying", inventory.weapon.attackDelay);
 
         if (animator.GetInteger("AttackState") == 2) return;
-        movement.Rotation((Vector3)mousePosition - transform.position);
+        movement.Rotation((Vector3)attackPos);
+    }
+
+    public void Attack2MousePos(Vector2 attackPos)
+    {
+        animator.SetTrigger("Attack");
+
+        if (animator.GetInteger("AttackState") == 2) return;
+        movement.Rotation((Vector3)attackPos - transform.position);
+    }
+
+    public void HitTarget(Character target)
+    {
+        target.Hit(this);
     }
 
     public void Move(Vector2 moveVector)
     {
+        if (animator.GetBool("IsHit")) return;
         if (animator.GetBool("IsAttack")) return;
         animator.SetBool("Run", moveVector != Vector2.zero);
         movement.Action(stats.MoveSpeed, moveVector);
@@ -52,8 +85,8 @@ public class Character : MonoBehaviour
 
     }
 
-    public void Hit()
+    public void Hit(Character atttacker)
     {
-
+        animator.SetTrigger("Hit");
     }
 }
