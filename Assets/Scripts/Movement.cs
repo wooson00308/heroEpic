@@ -2,29 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Movement : MonoBehaviour
+namespace Scripts
 {
-    public void Action(float moveSpeed, Vector3 moveVector)
+    public class Movement : MonoBehaviour
     {
-        Position(moveSpeed, moveVector);
-        Rotation(moveVector);
-    }
-
-    public void Position(float moveSpeed, Vector3 moveVector)
-    {
-        transform.position += moveSpeed * Time.deltaTime * moveVector;
-    }
-
-    public void Rotation(Vector3 moveVector)
-    {
-        if (moveVector.x == 0) return;
-        if (moveVector.x > 0)
+        public void OnMove(Unit unit, Vector3 moveDir)
         {
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-        }
-        else if(moveVector.x < 0)
-        {
-            transform.rotation = Quaternion.Euler(0, 180, 0);
+            unit.transform.position += Time.deltaTime * unit.moveSpeed * moveDir;
         }
     }
 }
+

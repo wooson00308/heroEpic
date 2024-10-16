@@ -1,11 +1,14 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
-public class Attack : MonoBehaviour
+namespace Scripts
 {
-    public void OnAttack(Character target, Character owner)
+    public class Attack : MonoBehaviour
     {
-        target.Hit(owner);
+        public void OnAttack()
+        {
+
+        }
     }
 }
